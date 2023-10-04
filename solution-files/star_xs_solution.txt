@@ -1,0 +1,17 @@
+fractional clique cover number value: 7
+fractional clique cover number solution:
+x0: 0
+x1: 1
+x2: 1
+x3: 1
+x4: 1
+x5: 1
+x6: 1
+x7: 0
+x8: 0
+x9: 0
+x10: 0
+x11: 0
+x12: 0
+x13: 0
+x14: 1

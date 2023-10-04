@@ -1,0 +1,272 @@
+\documentclass[12pt, a4paper]{article}
+
+%Template Values
+\newcommand{\course}{Optimisation}
+\newcommand{\lecturer}{Anonymous Marking Code: Z0973527}
+
+%The Preamble - Commands that affect the entire document.
+
+%Margins
+\usepackage{amssymb, amsmath, amsthm}
+\newcommand{\R}{\mathbb{R}}
+
+\usepackage[top=1in, bottom=1in, left=0.6in, right=0.6in]{geometry}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{bbm}
+\usepackage{bbold}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage[export]{adjustbox}
+\usepackage{caption}
+\usepackage{textcmds}
+\usepackage{pgfplots}
+\usepackage{ltablex}
+\usepackage{subcaption}
+\usepackage{enumitem}
+
+\usepackage{color}
+\usepackage[urlcolor = blue]{hyperref}
+\hypersetup{citecolor=blue}
+\hypersetup{
+	colorlinks=true,
+	linktoc=all,
+	linkcolor=black
+}
+
+%For chapter pages
+\fancypagestyle{plain}{
+	\fancyhead{}
+	\fancyfoot[CO,CE]{Page \thepage}
+	\renewcommand{\headrulewidth}{0.5pt} % Header rule's width
+	\renewcommand{\footrulewidth}{0.5pt} % Header rule's width
+}
+
+\renewcommand\sectionmark[1]{\markboth{#1}{}}
+
+\fancypagestyle{MainStyle}{
+	%No Evens and Odds in report - only book
+	\fancyfoot[LE]{}
+	\fancyfoot[LO]{}
+	\fancyfoot[RE]{}
+	\fancyfoot[RO]{}
+	\fancyfoot[CE]{Page \thepage}
+	\fancyfoot[CO]{Page \thepage}
+	\fancyhead[LE]{\course}
+	\fancyhead[LO]{\course}
+	\fancyhead[RE]{\lecturer}
+	\fancyhead[RO]{\lecturer}
+	\fancyhead[CE]{}
+	\fancyhead[CO]{}
+	\renewcommand{\headrulewidth}{0.4pt} % Header rule's width
+	\renewcommand{\footrulewidth}{0.4pt} % Header rule's width
+
+}
+
+\begin{document}
+\renewcommand\refname{Bibliography}
+\pagestyle{MainStyle}
+%Top matter - Title, Author, Date (Today by default)
+
+%Sectioning
+%Sections: Part (Numerals), Chapter, Section, Subsection, Subsubsection, Paragraph, Subparagraph. Also Appendicies (Letters)
+
+%To change normal and contents title use \section[Contents heading]{Normal heading}
+
+%By default Part Chapter and Section get numbers as x=3 in \setcounter{secnumdepth}{x}. This can be changed between 1-7. The numbering depth that occurs in the contents can be changed using \setcounter{tocdepth}{x}.
+%Unnumberered sections use \section*{title} syntax
+
+%SPECIAL SECTIONS
+
+%\renewcommand{\contentsname}{NEW NAME}
+%\listoffigures
+%\renewcommand{\listfigurename}{NEW NAME}
+%\listoftables
+%\renewcommand{\listtablename}{NEW NAME}
+
+%Levels of sections can be changed as such \renewcommand*{\toclevel@chapter}{-1} % Put chapter depth at the same level as \part.
+
+\section*{Using the program}
+\subsection*{Dependencies}
+\begin{itemize}[label=\raisebox{0.25ex}{\tiny$\bullet$}]
+\itemsep0em
+\item networkx
+\item pulp
+\item fractions
+\end{itemize}
+Each of the above packages are used in my implementation. `networkx' is used for graph representation, `pulp' is used as our linear program solver and `fractions' is used to ensure each output is rational.\\
+In order to install, we simply do the following:
+\begin{itemize}[label=\raisebox{0.25ex}{\tiny$\bullet$}]
+\itemsep0em
+\item pip install networkx
+\item pip install pulp
+\item fractions is included in the python standard library
+\end{itemize}
+Alternatively, you could manually download them from github or elsewhere.
+\subsection*{Input}
+For a given graph $G$ with $n$ vertices, we require a simple method of inputting the graph into our tool. We represent the graph in a text file. The text file is represented in the following format:
+\begin{enumerate}[label=(\arabic*),leftmargin=6\parindent]
+\itemsep0em
+\item[\textbf{vertex/line 1:}]$(1, 2)$ $(1,3)$ \dots $(1,n-2)$ $(1,n-1)$ $(1, n)$
+\item[\textbf{vertex/line 2:}] $(2, 3)$ $(2,4)$ \dots $(2,n-1)$ $(2, n)$
+\item[\textbf{vertex/line i:}] $(i, i+1)$ $(i,i+2)$ \dots $(i, n)$
+\item[\textbf{vertex/line n-2:}] $(n-2,n-1)$ $(n-2, n)$
+\item[\textbf{vertex/line n-1:}] $(n-1,n)$
+\end{enumerate}
+For each $(i,j)$ we either have $(i, j) = 0$ if there does not exist an edge between vertex $i$ and vertex $j$, and $(i, j) = 1$ if there is an edge between vertex $i$ and vertex $j$. Below, in Figure \ref{fig:fig1} we see an example graph and its corresponding representation in a text file. Note we don't label lines `\textbf{vertex/line i}' in the actual text file, this is simply in the above for clarity.
+
+\begin{figure}[!htb]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[height=4.2cm, width=.55\linewidth]{"images/graph1_1".png}
+  \caption*{The graph $G_1$.}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[height=4.2cm, width=.75\linewidth]{"images/graph1_2".png}
+  \caption*{The input representation of $G_1$. }
+  \label{fig:sub2}
+\end{subfigure}
+\caption{A given graph $G_1$ and its corresponding input representation in a text file.}
+\label{fig:fig1}
+\end{figure}
+
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth, height=3.5cm]{"images/terminal".png}
+\caption{The input procedure for our program, in terminal.}
+\label{fig:fig2}
+\end{figure}
+
+\begin{itemize}[label=\raisebox{0.25ex}{\tiny$\bullet$}]
+\itemsep0em
+\item In order to run the program, we begin by opening the command line (in this case terminal) and navigating to the directory of our Python file.
+\item Once we're in the same directory as our python file, input `python optimisation.py' to the run the file.
+\item At this point we're prompted to provide the input graph file that we'll be running the program on. Since our the input file for our graph is called `graph1.txt' and it's in the same directory as our program, I can simply input `graph1.txt'. If it was in another directory I would need to provide that directory.
+\item An example of me running the program on `graph1.txt' is shown in Figure \ref{fig:fig2}.
+\end{itemize}
+
+
+\subsection*{Output}
+As we saw in Figure \ref{fig:fig2} once we run the program and provide it with an input graph, it outputs the fractional cover number value and shannon entropy value to the user - in \textbf{rational format}. However, since the solution may contain a large number of variables, rather than output each variable value we save the solution to a file. The aforementioned solution files are simply text files that contain the value of the objective function which is either the \textbf{fractional clique cover number} or the \textbf{shannon entropy}, followed by each variable in the linear program and the variable's value. The two text files produced for our earlier graph $G_1$ (displayed in Figure \ref{fig:fig1}) are displayed in Figure \ref{fig:fig4}. The text files are produced and saved in the same directory as our python file. Both the objective function values and each variable value are stored in rational format making the text file easily readable.
+
+\begin{figure}[!htb]
+\centering
+\begin{subfigure}{.45\textwidth}
+  \centering
+  \includegraphics[height=5cm, width=.9\textwidth]{"images/solution1".png}
+  \caption*{The saved solution for the fractional clique cover number for graph $G_1$ and each $x_S$ value.}
+  \label{fig:sub3}
+\end{subfigure}\hfill
+\begin{subfigure}{.45\textwidth}
+  \centering
+  \includegraphics[height=5cm, width=.9\textwidth]{"images/solution2".png}
+  \caption*{The saved solution for the shannon entropy for graph $G_1$ and each $x_S$ value.}
+  \label{fig:sub4}
+\end{subfigure}
+\caption{The above is the standard format of any of the solution files produced by the program, in any case each of the variable values or objective function values will be given in rational format.}
+\label{fig:fig4}
+\end{figure}
+
+
+\section*{Linear Program modifications}
+Here we use the same definitions for $G$, $V$, $S$ and $\mathcal{K}(G)$ as stated in the assignment brief.
+\subsection*{\textbf{fractional clique cover number} $\pi^*(G)$}
+\begin{equation*}
+\begin{array}{ll@{}ll}
+\text{minimise}  & \displaystyle\sum\limits_{S \subseteq V} x_S &\\
+\text{subject to}& \displaystyle\sum\limits_{S:v\in S}   &x_{S} \geq 1,  & \forall v \in V\\
+                 &                                                &x_{S} = 0  & \forall S \notin \mathcal{K}(G)\\
+                 &                                                &x_{S} \geq 0  & \forall S \subseteq V
+\end{array}
+\end{equation*}
+Since the objective of the above is to minimise a sum, and we have the constraint  
+\begin{equation*}
+x_{S} = 0  \, \, \, \, \, \forall S \notin \mathcal{K}(G)
+\end{equation*}
+ we need only consider the values $x_{S}$ such that $S \in \mathcal{K}(G)$, as any $x_S$ that are not in the set of cliques will have a value of $0$ and thus they will not contribute to the sum. As a result of this, the \textbf{fractional clique cover number} linear program becomes:
+ \begin{equation*}
+\begin{array}{ll@{}ll}
+\text{minimise}  & \displaystyle\sum\limits_{S \in \mathcal{K}(G)} x_S &\\
+\text{subject to}& \displaystyle\sum\limits_{S:v\in S\in \mathcal{K}(G)}   &x_{S} \geq 1,  & \forall v \in V\\
+                 &                                                &x_{S} \geq 0  & \forall S \subseteq V
+\end{array}
+\end{equation*}
+and due to the reduction in number of variables and removal of redundant constraints, we are able to obtain a solution to the linear program far more quickly.
+\subsection*{\textbf{shannon entropy} $\eta(G)$}
+\begin{equation*}
+\begin{array}{ll@{}ll}
+\text{maximise}  & x_V &\\
+\text{subject to}& x_\emptyset = 0 &\\
+                 &           x_{\{v\}} \leq 1  & \, \, \,  \forall v \in V\\
+                 &x_{N(v)\cup \{v\}} - x_{N(v)} = 0&  \, \, \, \forall v \in V\\
+                 &x_T-x_S \geq 0&  \, \, \, \forall S \subseteq T \subseteq V\\
+                 &x_S + x_T - x_{S\cup T} - x_{S\cap T} \geq 0&   \, \, \,  \forall S, T \subseteq V \\
+                 &           x_{S} \geq 0 & \, \, \,  \forall S \subseteq V \\
+\end{array}
+\end{equation*}
+If we consider the case when $S \subseteq T$, then we have that $ S \cup T = T$ and $ S \cap T = S$. As a result $x_S + x_T - x_{S\cup T} - x_{S\cap T}  = x_S + x_T - x_T - x_S = 0$, and applying the constraint 
+\begin{equation*}
+x_S + x_T - x_{S\cup T} - x_{S\cap T} \geq 0  \, \, \, \, \, \, \, \forall S, T \subseteq V
+\end{equation*}
+doesn't give us any new information as it essentially states $0 \geq 0$. Thus in the case that $S \subseteq T$ we need not  apply $x_S + x_T - x_{S\cup T} - x_{S\cap T} \geq 0  \, \, \, \, \, \, \, \forall S, T \subseteq V$ - as the constraint is redundant.\\ Similarly, when $S=T$, the constraint  $x_T-x_S \geq 0  \, \, \, \forall S \subseteq T \subseteq V$ simply gives us $x_T-x_S = x_T - x_T =  0 \geq 0$, again this constraint is redundant. We avoid this by altering the constraint to  $x_T-x_S \geq 0  \, \, \, \forall S \subset T \subseteq V$ so that it's only applied when $S$ is a proper subset of $T$.\\
+As a result of both of the above alterations, the \textbf{shannon entropy} linear program becomes:
+\begin{equation*}
+\begin{array}{ll@{}ll}
+\text{maximise}  & x_V &\\
+\text{subject to}& x_\emptyset = 0 &\\
+                 &           x_{\{v\}} \leq 1  & \, \, \,  \forall v \in V\\
+                 &x_{N(v)\cup \{v\}} - x_{N(v)} = 0&  \, \, \, \forall v \in V\\
+                 &x_T-x_S \geq 0&  \, \, \, \forall S \subset T \subseteq V\\
+                 &x_S + x_T - x_{S\cup T} - x_{S\cap T} \geq 0&   \, \, \,  \forall S\nsubseteq T \subseteq V \\
+                 &           x_{S} \geq 0 & \, \, \,  \forall S \subseteq V \\
+\end{array}
+\end{equation*}
+
+The above alterations to the two linear programs result in a reduction in the number of constraints for any graph, as it prevents us from producing (and applying) a number of redundant constraints. As a result of this, solutions to the two linear programs may be obtained far more quickly.
+
+\subsection*{Solutions}
+In this section I will discuss some of the solutions obtained, and the speed at which they were attained. Due to the large number of variables involved in the solution, I will simply state the value of the objective function. If you wish to investigate the specific variable values - find them in solution text files and graph representations in the submission folder. The random graph is shown in Figure \ref{fig:rand}.\\
+
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c|c|c| } 
+\hline
+ \bf{number of vertices} &$10$& $8$ & $8$ &$8$ & $8$& $7$ & $7$   \\
+\hline
+ \bf{graph type} &complete& complete & random & star & cycle& $G_1 $ & $G_2$ \\
+\hline
+\bf{fractional cover clique number} &$1$& $1$& $3$ & $7$& $4$ &$\frac{10}{3}$  & $\frac{7}{2}$    \\ 
+\hline
+\bf{shannon entropy} &$9$& $7$ &$5$ & $1$&$4$ & $\frac{11}{3}$ & $\frac{7}{2}$    \\ 
+\hline
+{\bf time taken} (seconds) &$100.124$ & $3.258$ & $4.202$ & $3.423$& $3.932$ & $0.784$ & $0.693$    \\ 
+\hline
+\end{tabular}
+\end{center}
+\label{fig:results}
+\end{figure}
+
+\begin{wrapfigure}{r}{0.3\textwidth}
+  \begin{center}
+    \includegraphics[width=0.25\textwidth]{"images/random8".png}
+  \end{center}
+  \caption{The random graph with $8$ vertices and $p=\frac{1}{2}$.}
+  \label{fig:rand}
+\end{wrapfigure}
+In the table we see a number of shannon entropy and fractional cover clique numbers for various graphs - calculated using our program. The graphs $G_1$ and $G_2$ are the same $G_1$ and $G_2$ found in \textbf{[1]}. In each case we see that the $\eta(G) + \pi^*(G) \geq n$ is satisfied.
+The `time taken' shown in the table is the combined time to obtain and save a solution for both linear programs. However, obtaining the fractional cover clique number is almost instantaneous and the majority of the time is spent obtaining the shannon entropy. In comparison to a naive implementation (which implements every constraint in the original linear program), the altered linear programs are consistently faster. When both the altered and naive linear program were performed on a graph with $8$ vertices: the altered shannon entropy linear program was approximately $114.6\%$ faster (i.e. it took less than half the time), whilst the altered fractional clique cover number linear program was approximately $205.26\%$ faster (i.e. it took less than a third of the time).
+\subsection*{References}
+\begin{enumerate}[label=(\arabic*),leftmargin=2\parindent]
+\itemsep0em
+\item[\textbf{[1]}]Maximilien Gadouleau. On the possible values of the entropy of undirected graphs. Journal of Graph Theory, 82:302–311, 2018.
+\end{enumerate}
+
+\end{document}
